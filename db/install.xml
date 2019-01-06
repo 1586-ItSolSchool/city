@@ -21,5 +21,58 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="city_wallets" COMMENT="таблица для хранения списка кошельков">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="id курса с игрой"/>
+        <FIELD NAME="type" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="тип кошелька. 0 -- частный, 1 -- компании, -1 -- казна"/>
+        <FIELD NAME="ownerid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="id компании или пользователя. Если тип==-1, то здесь тоже -1 и это казна."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="city_transactions" COMMENT="таблица для хранения списка мета-информаций о транзакциях">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="id курса с игрой"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="время совершения транзакции"/>
+        <FIELD NAME="type" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="тип транзакции. 0 эмитирование 1 передача бюджета 2 выплата гранта 3 выплата зарплаты 4 уплата налогов"/>
+        <FIELD NAME="amount" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="4" COMMENT="Тотальная сумма транзакции"/>
+        <FIELD NAME="ministrycomment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="комментарий от имени министра"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="city_transaction_details" COMMENT="Конкретизация данных о транзакциях">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="walletid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="id кошелька"/>
+        <FIELD NAME="currentamount" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="4" COMMENT="изменение баланса конкретного кошелька"/>
+        <FIELD NAME="ownercomment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="комментарий владельца кошелька"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="city_contracts" COMMENT="таблица для хранения контрактов">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="companyid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="id компании"/>
+        <FIELD NAME="started" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="время начала контракта"/>
+        <FIELD NAME="ended" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="-1" SEQUENCE="false" COMMENT="дата разрыва контракта или -1, если действует"/>
+        <FIELD NAME="profession" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="поле для названия профессии"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="поле для хранения подробностей"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="id жителя"/>
+        <FIELD NAME="signedbyuser" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="-1" SEQUENCE="false" COMMENT="время подписания жителем или -1, если не подписан"/>
+        <FIELD NAME="signedbycompany" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="-1" SEQUENCE="false" COMMENT="время подписания компанией или -1"/>
+        <FIELD NAME="signedbyministry" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="-1" SEQUENCE="false" COMMENT="время подписания минэкономики или -1 если ещё нет"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
   </TABLES>
 </XMLDB>
