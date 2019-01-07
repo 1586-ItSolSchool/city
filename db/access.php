@@ -7,25 +7,9 @@
  */
 $capabilities = array(
  
- 'mod/city:viewalltransactions' => array(
-     'riskbitmask' => RISK_PERSONAL,
-     'captype' => 'view',
-     'contextlevel' => CONTEXT_COURSE,
-     'archetypes' => array(
-         'manager' => CAP_ALLOW
-     ),
- ),
  'mod/city:editalltransactions' => array(
     'riskbitmask' => RISK_PERSONAL,
     'captype' => 'write',
-    'contextlevel' => CONTEXT_COURSE,
-    'archetypes' => array(
-        'manager' => CAP_ALLOW
-    ),
-),
-'mod/city:viewallcontracts' => array(
-    'riskbitmask' => RISK_PERSONAL,
-    'captype' => 'view',
     'contextlevel' => CONTEXT_COURSE,
     'archetypes' => array(
         'manager' => CAP_ALLOW
@@ -40,6 +24,14 @@ $capabilities = array(
     ),
 ),
 'mod/city:commentasminecon' => array(
+    'riskbitmask' => RISK_PERSONAL,
+    'captype' => 'write',
+    'contextlevel' => CONTEXT_COURSE,
+    'archetypes' => array(
+        'manager' => CAP_ALLOW
+    ),
+),
+'mod/city:createcompanies' => array(
     'riskbitmask' => RISK_PERSONAL,
     'captype' => 'write',
     'contextlevel' => CONTEXT_COURSE,
