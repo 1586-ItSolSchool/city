@@ -15,15 +15,26 @@ class mod_city_mod_form extends moodleform_mod { // магия
         $mform =& $this->_form; // теперь $mform это "сокращенная запись" для $this->_form
         $id = $this->_instance; // id экземпляра модуля, не пуст если мы Редактируем игру и пуст если это новое создание
  
-        $mform->addElement('html','Базовые настройки казны (их нельзя редактировать после запуска игры)');  // очень плохо и так делать не надо
-        $mform->addElement('text', 'initialammount', 'Изначальный размер казны', array('size'=>'10'));      // очень плохо и так делать не надо
-        $mform->setType('initialammount', PARAM_INT); // https://docs.moodle.org/dev/lib/formslib.php_Form_Definition#setType
-        $mform->addRule('initialammount', null, 'required', null);
+        $mform->addElement('header', 'general', get_string('general', 'form'));
+        $mform->addElement('text', 'name', get_string('modulename', 'city'), array('size' => '64'));
 
-        $type = required_param('type', PARAM_ALPHA); // таким образом можно обработать тип создаваемой страницы активностей
-        $mform->addElement('hidden', 'type', $type);
-        $mform->setDefault('type', $type);
-        $mform->setType('type', PARAM_ALPHA);
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('name', PARAM_TEXT);
+        } else {
+            $mform->setType('name', PARAM_CLEANHTML);
+        }
+
+        $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        //$mform->addElement('html','Базовые настройки казны (их нельзя редактировать после запуска игры)');  // очень плохо и так делать не надо
+        //$mform->addElement('text', 'initialammount', 'Изначальный размер казны', array('size'=>'10'));      // очень плохо и так делать не надо
+        //$mform->setType('initialammount', PARAM_INT); // https://docs.moodle.org/dev/lib/formslib.php_Form_Definition#setType
+        //$mform->addRule('initialammount', null, 'required', null);
+
+        //$type = required_param('type', PARAM_ALPHA); // таким образом можно обработать тип создаваемой страницы активностей
+        //$mform->addElement('hidden', 'type', $type);
+        //$mform->setDefault('type', $type);
+        //$mform->setType('type', PARAM_ALPHA);
 
         $this->standard_coursemodule_elements(); // остальная портянка формы
         $this->add_action_buttons(); // кнопка "сохранить" и остальные крутые кнопки 

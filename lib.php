@@ -1,7 +1,12 @@
 <?php
     function city_add_instance($city){
-        print_r($city);
-        return 2;
+        global $DB;
+
+        $city->timecreated = time();
+
+        $id = $DB->insert_record('city', $city);
+
+        return $id;
     };
     function city_update_instance($city){};
     function city_delete_instance($id){};
@@ -16,6 +21,7 @@
         global $DB, $CFG;
         $pages = array();
 
+        /* // сделаю всё в одной странице пока
         // Мой игровой профиль
         $page = new stdClass;
         $page->archetype = MOD_CLASS_ACTIVITY;  // Тип страницы: Активность. Обязательная строчка
@@ -25,7 +31,7 @@
         $page->link = new moodle_url($defaultitem->link, array('type' => $page->name));
         $page->help = get_string('myprofilehelp', 'city');  // подключаем текст справки для меню активности
         $pages[] = $page;
-        unset($page);
+        unset($page); //*/
 
         // Обзор экономики
         $page = new stdClass;

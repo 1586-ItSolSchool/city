@@ -5,6 +5,7 @@
  * @see https://docs.moodle.org/dev/Activity_modules#Lang_Folder
  */
 $string['modulename'] = 'Цифровой Город';
+$string['modulenameplural'] = '';
 
 // строки для меню добавления активности. при любом изменении строк нужно очищать кеши moodle.
 $string['myprofile'] = 'Мой игровой профиль';

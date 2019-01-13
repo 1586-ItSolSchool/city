@@ -5,6 +5,7 @@
  * @see https://docs.moodle.org/dev/Activity_modules#Lang_Folder
  */
 $string['modulename'] = 'Digital City';
+$string['modulenameplural'] = '';
 
 $string['myprofile'] = 'My game profile';
 $string['myprofilehelp'] = 'This page allows users to view their wallet and contracts';
