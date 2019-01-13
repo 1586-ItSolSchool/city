@@ -1,15 +1,37 @@
 <?php
     function city_add_instance($city){
-        global $DB;
+        global $DB, $course;
 
         $city->timecreated = time();
 
         $id = $DB->insert_record('city', $city);
+        $trId = $DB->insert_record('city_transactions', Array(
+            'course'    => $course->id,
+            'time'      => time(),
+            'type'      => 0, // инициализация
+            'amount'    => 10000,
+        ));
+        $DB->insert_record('city_transaction_details', Array(
+            'walletid'  => -1,
+            'currentamount' => 10000,
+            'transactionid' => $trId
+        ));
 
         return $id;
     };
     function city_update_instance($city){};
-    function city_delete_instance($id){};
+    function city_delete_instance($id){
+        global $DB;
+    
+        $exists = $DB->get_record('city', array('id' => $id));
+        if (!$exists) {
+            return false;
+        }
+    
+        $DB->delete_records('city', array('id' => $id));
+    
+        return true;
+    };
 
     /**
      * Возвращает список страниц для меню новой активности/ресурса курса.

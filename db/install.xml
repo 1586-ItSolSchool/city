@@ -51,6 +51,7 @@
         <FIELD NAME="walletid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="id кошелька"/>
         <FIELD NAME="currentamount" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="4" COMMENT="изменение баланса конкретного кошелька"/>
         <FIELD NAME="ownercomment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="комментарий владельца кошелька"/>
+        <FIELD NAME="transactionid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
