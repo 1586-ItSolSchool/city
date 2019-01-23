@@ -39,6 +39,14 @@ $capabilities = array(
         'manager' => CAP_ALLOW
     ),
 ),
+'mod/city:operatebudget' => array(
+    'riskbitmask' => RISK_PERSONAL,
+    'captype' => 'write',
+    'contextlevel' => CONTEXT_COURSE,
+    'archetypes' => array(
+        'manager' => CAP_ALLOW
+    ),
+),
 
 // see https://docs.moodle.org/dev/Activity_modules#access.php about this capability
 'mod/city:addinstance' => array(

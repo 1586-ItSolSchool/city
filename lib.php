@@ -10,6 +10,7 @@
             'time'      => time(),
             'type'      => 0, // инициализация
             'amount'    => 10000,
+            'techcomment'   => 'Стартовая инициализация казны',
         ));
         $DB->insert_record('city_transaction_details', Array(
             'walletid'  => -1,

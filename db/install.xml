@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/city/db" VERSION="20190113" COMMENT="база данных для Цифрового Города"
+<XMLDB PATH="mod/city/db" VERSION="20190123" COMMENT="база данных для Цифрового Города"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -40,6 +40,7 @@
         <FIELD NAME="type" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="тип транзакции. 0 эмитирование 1 передача бюджета 2 выплата гранта 3 выплата зарплаты 4 уплата налогов"/>
         <FIELD NAME="amount" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="4" COMMENT="Тотальная сумма транзакции"/>
         <FIELD NAME="ministrycomment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="комментарий от имени министра"/>
+        <FIELD NAME="techcomment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Автоматические комментарии системы к транзакциям"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
