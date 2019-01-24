@@ -124,7 +124,7 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
     if ($fromform = $mform->get_data()) {
         $cWallet = $DB->get_record('city_wallets',Array('id' => $fromform->wallettotransfer),'*',MUST_EXIST);
         $cUser = $DB->get_record('user',Array('id' => $cWallet->ownerid),'id,username,firstname,lastname',MUST_EXIST);
-        $ctechcomment = sprintf('Выдача бюджета пользователем %s: %s %s в размере %d часов с кошелька №%d (%d в кошельке) пользователю %s: %s %s на кошелёк №%d (%d в кошельке)',
+        $ctechcomment = sprintf('Выдача бюджета пользователем %s: %s %s в размере %d часов из казны №%d (%f в казне) пользователю %s: %s %s на кошелёк №%d (%f в кошельке)',
             $USER->username, $USER->firstname, $USER->lastname, $fromform->amounttotransfer, -1, 
             city_get_wallet_amount($course->id, -1), $cUser->username, $cUser->firstname, 
             $cUser->lastname, $fromform->wallettotransfer, 
@@ -167,7 +167,7 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
                     'time'      => time(),
                     'type'      => 4, // уплата налогов
                     'amount'    => $payment,
-                    'techcomment'   => sprintf('Уплата налогов пользователем %s: %s %s в размере %d часов с кошелька №%d (%d в кошельке)',
+                    'techcomment'   => sprintf('Уплата налогов пользователем %s: %s %s в размере %d часов с кошелька №%d (%f в кошельке)',
                                             $USER->username, $USER->firstname, $USER->lastname, $payment, $myWallet->id, $amount),
                 ));
                 $DB->insert_record('city_transaction_details', Array(
@@ -191,31 +191,35 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
             if(!(2 == $fromform->transfertype OR 3 == $fromform->transfertype))
                 echo '<b>Некорректный тип перевода</b>.<br>';
             else {
-                $cWallet = $DB->get_record('city_wallets',Array('id' => $fromform->wallettotransfer),'*',MUST_EXIST);
-                $cUser = $DB->get_record('user',Array('id' => $cWallet->ownerid),'id,username,firstname,lastname',MUST_EXIST);
-                $ctechcomment = sprintf('%s пользователем %s: %s %s в размере %d часов с кошелька №%d (%d в кошельке) пользователю %s: %s %s на кошелёк №%d (%d в кошельке)',
-                    $transferTypes[$fromform->transfertype], $USER->username, $USER->firstname, $USER->lastname, $fromform->amounttotransfer, $myWallet->id, 
-                    city_get_wallet_amount($course->id, $myWallet->id), $cUser->username, $cUser->firstname, 
-                    $cUser->lastname, $fromform->wallettotransfer, 
-                    city_get_wallet_amount($course->id, $fromform->wallettotransfer));
-                $trId = $DB->insert_record('city_transactions', Array(
-                    'course'    => $course->id,
-                    'time'      => time(),
-                    'type'      => $fromform->transfertype,
-                    'amount'    => $fromform->amounttotransfer,
-                    'techcomment'   => $ctechcomment,
-                ));
-                $DB->insert_record('city_transaction_details', Array(
-                    'walletid'  => $fromform->wallettotransfer,
-                    'currentamount' => $fromform->amounttotransfer,
-                    'transactionid' => $trId
-                ));
-                $DB->insert_record('city_transaction_details', Array(
-                    'walletid'  => $myWallet->id,
-                    'currentamount' => -$fromform->amounttotransfer,
-                    'transactionid' => $trId
-                ));
-                echo $ctechcomment.'<br>';
+                if($amount < $fromform->amounttotransfer or $fromform->amounttotransfer <= 0)
+                    echo '<b>Некорректный размер перевода</b>';
+                else {
+                    $cWallet = $DB->get_record('city_wallets',Array('id' => $fromform->wallettotransfer),'*',MUST_EXIST);
+                    $cUser = $DB->get_record('user',Array('id' => $cWallet->ownerid),'id,username,firstname,lastname',MUST_EXIST);
+                    $ctechcomment = sprintf('%s пользователем %s: %s %s в размере %f часов с кошелька №%d (%f в кошельке) пользователю %s: %s %s на кошелёк №%d (%f в кошельке)',
+                        $transferTypes[$fromform->transfertype], $USER->username, $USER->firstname, $USER->lastname, $fromform->amounttotransfer, $myWallet->id, 
+                        city_get_wallet_amount($course->id, $myWallet->id), $cUser->username, $cUser->firstname, 
+                        $cUser->lastname, $fromform->wallettotransfer, 
+                        city_get_wallet_amount($course->id, $fromform->wallettotransfer));
+                    $trId = $DB->insert_record('city_transactions', Array(
+                        'course'    => $course->id,
+                        'time'      => time(),
+                        'type'      => $fromform->transfertype,
+                        'amount'    => $fromform->amounttotransfer,
+                        'techcomment'   => $ctechcomment,
+                    ));
+                    $DB->insert_record('city_transaction_details', Array(
+                        'walletid'  => $fromform->wallettotransfer,
+                        'currentamount' => $fromform->amounttotransfer,
+                        'transactionid' => $trId
+                    ));
+                    $DB->insert_record('city_transaction_details', Array(
+                        'walletid'  => $myWallet->id,
+                        'currentamount' => -$fromform->amounttotransfer,
+                        'transactionid' => $trId
+                    ));
+                    echo $ctechcomment.'<br>';
+                }
             }
         }
     }
