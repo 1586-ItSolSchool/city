@@ -26,16 +26,16 @@ function city_get_wallet_amount($cid, $walletid = -1){
  */
 function city_get_wallets_by_course_id($cid){
     global $DB;
-    $res = Array(Array(
+    $res = Array(/*Array(
         'walletid'  => -1,
         'username'  => '__Казна__',
         'firstname' => '',
         'lastname' => '',
         'amount'    => city_get_wallet_amount($cid, $walletid = -1),
         'ownerid'    => -1,
-    ));
+    )*/);
 
-    $wallets = $DB->get_records('city_wallets', Array('course' => $cid, 'type' => 0));
+    $wallets = $DB->get_records('city_wallets', Array('course' => $cid, 'type' => 0), $sort='id');
 
     foreach ($wallets as $wallet) {
         $cUser = $DB->get_record('user',Array('id' => $wallet->ownerid),'id,username,firstname,lastname',IGNORE_MISSING);
