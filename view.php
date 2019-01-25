@@ -115,8 +115,56 @@ echo 'В казне сейчас: '.city_get_wallet_amount($course->id, -1).' ч
 
 if(has_capability('mod/city:operatebudget',$modulecontext))
     echo 'У вас есть право <a href="'. new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'operateBudgetStart')) .'">управлять казной</a>.<br>';
-else 
-    echo 'У вас нет прав управлять казной.<br>';
+if(has_capability('mod/city:editalltransactions',$modulecontext))
+    echo 'У вас есть право <a href="'. new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'viewTransactions')) .'">просматривать все переводы всех жителей</a>.<br>';
+
+if(has_capability('mod/city:editalltransactions',$modulecontext) && 'viewTransactions' == $action){
+    $allwallets = city_get_wallets_by_course_id($course->id);
+    if($allwallets){
+        echo '<table width="100%" border="1">
+        <tr>
+            <td>№</td>
+            <td>Владелец кошелька</td>
+            <td>Текущий баланс</td>
+            <td>Действия</td>
+        </tr>
+        <tr>
+            <td>-1</td>
+            <td>__КАЗНА__ и Уплата налогов</td>
+            <td>'.city_get_wallet_amount($course->id, -1).'</td>
+            <td><a href="'.new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'viewTransactionsByWalletId','walletid'=>-1)).'" target="_blank">Перейти к транзакциям</a></td>
+        </tr>';
+        foreach( $allwallets as $cwallet ){
+            printf('<tr><td>%d</td><td>%s: %s %s</td><td>%f</td><td><a href="%s" target="_blank">Перейти к транзакциям</a></td></tr>', $cwallet['walletid'], $cwallet['username'], $cwallet['firstname'], $cwallet['lastname'], $cwallet['amount'], new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'viewTransactionsByWalletId','walletid'=>$cwallet['walletid'])));
+        }
+        echo '</table>';
+    } else echo 'Не найдены.<br>';
+}
+
+if(has_capability('mod/city:editalltransactions',$modulecontext) && 'viewTransactionsByWalletId' == $action){
+    $walletid = $action = optional_param('walletid', '-1', PARAM_INT);
+    if($walletid > -1){
+        $wallet = $DB->get_record('city_wallets', Array('id' => $walletid),'*',MUST_EXIST);
+        $cUser = $DB->get_record('user',Array('id' => $wallet->ownerid),'id,username,firstname,lastname',MUST_EXIST);
+        printf('<br><b>История денежных переводов %s: %s %s кошелёк номер %d </b>:<br>',$cUser->username,$cUser->firstname,$cUser->lastname,$wallet->id);
+    } else echo '<br><b>История движения денег в казне</b><br>';
+    $transactions = $DB->get_records('city_transaction_details', Array('walletid' => $walletid), $sort='transactionid', $fields='*', $strictness=IGNORE_MISSING);
+    if($transactions){
+        echo '<table width="100%" border="1">
+        <tr>
+            <td>№</td>
+            <td>Время перевода</td>
+            <td>Тип перевода</td>
+            <td>Сумма</td>
+            <td>Технический комментарий</td>
+        </tr>';
+        foreach( $transactions as $mytr ){
+            $cTr = $DB->get_record('city_transactions', Array('id' => $mytr->transactionid),'*',MUST_EXIST);
+            printf('<tr><td>%d</td><td>%s</td><td>%s</td><td>%f</td><td>%s</td></tr>',$cTr->id, date("Y-m-d H:i:s", $cTr->time), $transferTypes[$cTr->type], $cTr->amount, $cTr->techcomment);
+        }
+        echo '</table>';
+    } else echo 'Не найдены.<br>';
+}
 
 if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'operateBudget')) {
     $mform = new operatebudget_form();
@@ -242,7 +290,7 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
         }
 
         if($amount > 0){
-            echo '<a href="'.new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'transferStart')).'">Перевести деньги</a>.<br>';
+            echo '<a href="'.new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'transferStart')).'">Перевести деньги другому жителю</a>.<br>';
         }
 
         echo '<br><b>История моих денежных переводов</b>:<br>';
