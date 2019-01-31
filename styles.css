@@ -1,7 +1,7 @@
 #brd {
     border: 2px solid black;
     padding: 2px;
-    width: 250;
+    width: 360;
     text-align: center;
    }
 #transaction {
@@ -12,4 +12,11 @@
     width: 100;
     margin-left: 400px;
     margin-top: -45px;
+}
+.tab {
+    float: right;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin-right: 56%;
 }
