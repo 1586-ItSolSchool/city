@@ -3,6 +3,7 @@ require_once('../../config.php');
 require_once('lib.php');
 require_once('locallib.php');
 require_once("$CFG->libdir/formslib.php");
+echo '<link rel="stylesheet" type="text/css" href="styles.css" media="screen" />'; //Подключаем стили для плагина
  
 $id = required_param('id', PARAM_INT);    // Course Module ID
 $action = optional_param('action', 'overview', PARAM_NOTAGS); //https://docs.moodle.org/dev/lib/formslib.php_Form_Definition#Most_Commonly_Used_PARAM_.2A_Types
@@ -111,6 +112,10 @@ if(!$myWallet){
     $myWallet = $DB->get_record('city_wallets', array('course' => $course->id, 'ownerid' => $USER->id, 'type' => 0),'*', MUST_EXIST);
 }
 
+echo '<h1><div id="brd">Мой кошелек</div></h1><br>';
+$amount = city_get_wallet_amount($course->id, $myWallet->id);
+echo '<h3>Баланс: '.$amount.' часов</h3><h6><a href="">История операций</a></h6><div id="transaction">Операции</div><br>';
+//echo '<div id="transaction">Операции</div>';
 echo 'В казне сейчас: '.city_get_wallet_amount($course->id, -1).' часа(ов).<br>';
 
 if(has_capability('mod/city:operatebudget',$modulecontext))
@@ -198,7 +203,7 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
         //redirect($nexturl);
     }
 } else {
-    $amount = city_get_wallet_amount($course->id, $myWallet->id);
+    //$amount = city_get_wallet_amount($course->id, $myWallet->id);
     echo 'Ваш кошелёк: №'.$myWallet->id.' ('.$amount.' часа(ов) по состоянию на '.date("Y-m-d H:i:s").')<br>';
     if('taxPayment' == $action){
         $payment = optional_param('money', 3, PARAM_INT);
@@ -272,7 +277,7 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
         }
     }
     else {
-        echo 'Баланс: '.$amount.' часов. Уплатить налог: ';
+        echo 'Уплатить налог: ';
         if ($amount >= 3) {
             $taxPayment3 = new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'taxPayment','money'=>3));
             echo '<a href="'.$taxPayment3.'">3 часа (отметка Отлично)</a>, ';
