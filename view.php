@@ -121,21 +121,21 @@ if ($amount > 0){
             echo '</td></tr><tr><td><a href="'.new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'transferStart')).'">Перевести деньги</a>';
         }
         echo '</td></tr></tr></table>';
-echo '<h3>Баланс: '.$amount.' часа(ов)</h3><h6><a href="'. new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'viewMyTransactions')) .'">История операций</a></h6>';
+echo '<h3>Баланс: '.$amount.' часа(ов)</h3><h6><a href="'. new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'viewMyTransactions')) .'">История операций</a></h6><br>';
 
 if ('payTax' == $action){
-    echo 'Уплатить налог: ';
+    echo '<h2>Уплатить налог: </h2>';
         if ($amount >= 3) {
             $taxPayment3 = new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'taxPayment','money'=>3));
-            echo '<a href="'.$taxPayment3.'">3 часа (отметка Отлично)</a>, ';
+            echo '<a class="payTaxButton" href="'.$taxPayment3.'">3 часа (отметка Отлично)</a>';
         }
         if ($amount >= 2) {
             $taxPayment2 = new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'taxPayment','money'=>2));
-            echo '<a href="'.$taxPayment2.'">2 часа (отметка Хорошо)</a>, ';
+            echo '<a class="payTaxButton" href="'.$taxPayment2.'">2 часа (отметка Хорошо)</a>';
         }
         if ($amount >= 1) {
             $taxPayment1 = new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'taxPayment','money'=>1));
-            echo '<a href="'.$taxPayment2.'">1 час (отметка Удовлетворительно)</a>.<br>';
+            echo '<a class="payTaxButton" href="'.$taxPayment2.'">1 час (отметка Удовлетворительно)</a><br>';
         }
         if (0 == $amount) {
             echo 'нечем :-(<br>';
