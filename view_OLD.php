@@ -272,7 +272,7 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
         }
     }
     else {
-        echo 'Баланс: '.$amount.' часов. <br><hr> Уплатить налог: ';
+        echo 'Баланс: '.$amount.' часов. Уплатить налог: ';
         if ($amount >= 3) {
             $taxPayment3 = new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'taxPayment','money'=>3));
             echo '<a href="'.$taxPayment3.'">3 часа (отметка Отлично)</a>, ';
@@ -290,7 +290,7 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
         }
 
         if($amount > 0){
-            echo '<hr><br><a href="'.new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'transferStart')).'">Перевести деньги другому жителю</a>.<br>';
+            echo '<a href="'.new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'transferStart')).'">Перевести деньги другому жителю</a>.<br>';
         }
 
         echo '<br><b>История моих денежных переводов</b>:<br>';
