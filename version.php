@@ -27,4 +27,4 @@ $plugin->version = 2019010601;
 $plugin->requires = 2018050800;
 $plugin->component = 'mod_city';
 $plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '2019020301';
+$plugin->release = '2019020302';
