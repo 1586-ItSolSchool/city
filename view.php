@@ -22,7 +22,7 @@ $PAGE->set_context($modulecontext);
 echo $OUTPUT->header(); // ^ магия из view.mustache плагина конструктора плагинов
 
 $transferTypes = Array(
-    'Инициация', 'Передача бюджета', 'Выплата гранта', 'Выплата зарплаты', 'Уплата налогов'
+    'Инициация', 'Передача бюджета', 'Выплата гранта', 'Выплата зарплаты', 'Уплата налогов', 'Выплата пособия по безработице', 'Выплата степендии'
 );
 
 /**
@@ -86,6 +86,8 @@ class ordinarytransfer_form extends moodleform {
         $mform->addElement('select','transfertype','Тип перевода',Array(
             2 => $transferTypes['2'],
             3 => $transferTypes['3'],
+            5 => $transferTypes['5'],
+            6 => $transferTypes['6'],
         ));
         $mform->setType('transfertype', PARAM_INT);
         $mform->addElement('text','amounttotransfer','Сумма к переводу');
@@ -100,7 +102,7 @@ class ordinarytransfer_form extends moodleform {
 
 // Создаем кошелек, если у человека его ещё нет
 $myWallet = $DB->get_record('city_wallets', array('course' => $course->id, 'ownerid' => $USER->id, 'type' => 0),'*', IGNORE_MISSING);
-
+$amount = city_get_wallet_amount($course->id, $myWallet->id);
 if(!$myWallet){
     // создадим кошель
     $record = new stdClass;
@@ -198,7 +200,7 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
         //redirect($nexturl);
     }
 } else {
-    $amount = city_get_wallet_amount($course->id, $myWallet->id);
+    
     echo 'Ваш кошелёк: #'.$myWallet->id.' ('.$amount.' часа(ов) по состоянию на '.date("Y-m-d H:i:s").')<br>';
     if('taxPayment' == $action){
         $payment = optional_param('money', 3, PARAM_INT);
@@ -236,7 +238,7 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
         $mform = new ordinarytransfer_form();
         $mform->display();
         if ($fromform = $mform->get_data()) {
-            if(!(2 == $fromform->transfertype OR 3 == $fromform->transfertype))
+            if(!(2 == $fromform->transfertype OR 3 == $fromform->transfertype OR 5 == $fromform->transfertype OR 6 == $fromform->transfertype))
                 echo '<b>Некорректный тип перевода</b>.<br>';
             else {
                 if($amount < $fromform->amounttotransfer or $fromform->amounttotransfer <= 0)
