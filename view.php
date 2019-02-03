@@ -156,7 +156,7 @@ if ('payTax' == $action){
         }
         if ($amount >= 1) {
             $taxPayment1 = new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'taxPayment','money'=>1));
-            echo '<a class="payTaxButtonRed" href="'.$taxPayment2.'">1 час (отметка Удовлетворительно)</a><br>';
+            echo '<a class="payTaxButtonRed" href="'.$taxPayment1.'">1 час (отметка Удовлетворительно)</a><br>';
         }
         if (0 == $amount) {
             echo 'нечем :-(<br>';
