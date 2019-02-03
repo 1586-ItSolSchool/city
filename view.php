@@ -199,7 +199,7 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
     }
 } else {
     $amount = city_get_wallet_amount($course->id, $myWallet->id);
-    echo 'Ваш кошелёк: №'.$myWallet->id.' ('.$amount.' часа(ов) по состоянию на '.date("Y-m-d H:i:s").')<br>';
+    echo 'Ваш кошелёк: #'.$myWallet->id.' ('.$amount.' часа(ов) по состоянию на '.date("Y-m-d H:i:s").')<br>';
     if('taxPayment' == $action){
         $payment = optional_param('money', 3, PARAM_INT);
         if ($payment < 1 OR $payment > 3){
