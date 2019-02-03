@@ -198,6 +198,7 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
         //redirect($nexturl);
     }
 } else {
+    //test
     $amount = city_get_wallet_amount($course->id, $myWallet->id);
     echo 'Ваш кошелёк: #'.$myWallet->id.' ('.$amount.' часа(ов) по состоянию на '.date("Y-m-d H:i:s").')<br>';
     if('taxPayment' == $action){
