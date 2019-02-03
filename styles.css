@@ -1,0 +1,76 @@
+#brd {
+    border: 2px solid black;
+    padding: 2px;
+    width: 370px;
+    text-align: center;
+   }
+#transaction {
+    text-align: center;
+    border: 2px solid black;
+    padding: 2px;
+    border-radius: 5px;
+    width: 100;
+    margin-left: 400px;
+    margin-top: -45px;
+}
+.tab {
+    float: right;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin-right: 56%;
+}
+
+.payTaxButtonRed {
+  background: #fa0000;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0px;
+  color: #ffffff;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.payTaxButtonRed:hover {
+  background: #c70000;
+  color: #e6e6e6;
+  text-decoration: none;
+}
+
+.payTaxButtonOrange {
+    background: #ffa500;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0px;
+    color: #ffffff;
+    padding: 10px 20px 10px 20px;
+    text-decoration: none;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .payTaxButtonOrange:hover {
+    background: #e28b00;
+    color: #e6e6e6;
+    text-decoration: none;
+  }
+
+  .payTaxButtonGreen {
+    background: #00e600;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0px;
+    color: #ffffff;
+    padding: 10px 20px 10px 20px;
+    text-decoration: none;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .payTaxButtonGreen:hover {
+    background: #32cd32;
+    color: #e6e6e6;
+    text-decoration: none;
+  }

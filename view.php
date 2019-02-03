@@ -20,6 +20,7 @@ $PAGE->set_title(format_string($city->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext); 
 echo $OUTPUT->header(); // ^ магия из view.mustache плагина конструктора плагинов
+echo '<link rel="stylesheet" type="text/css" href="styles.css" media="screen" />'; //Подключаем стили для плагина
 
 $transferTypes = Array(
     'Инициация', 'Передача бюджета', 'Выплата гранта', 'Выплата зарплаты', 'Уплата налогов', 'Выплата пособия по безработице', 'Выплата степендии'
@@ -46,7 +47,7 @@ class operatebudget_form extends moodleform {
         foreach ($wallets as $wallet) {
             $selectWalletsOptions[$wallet['walletid']] = sprintf("%s: %s %s (№%d / %d часов)", $wallet['username'], $wallet['firstname'], $wallet['lastname'], $wallet['walletid'], $wallet['amount']);
         }
-
+        echo '<h3>Управление казной:</h3>';
         $mform->addElement('select','wallettotransfer','Кошелёк для перевода',$selectWalletsOptions);
         $mform->setType('wallettotransfer', PARAM_INT);
         $mform->addElement('text','amounttotransfer','Сумма к переводу');
@@ -79,7 +80,7 @@ class ordinarytransfer_form extends moodleform {
         foreach ($wallets as $wallet) {
             $selectWalletsOptions[$wallet['walletid']] = sprintf("%s: %s %s (№%d / %d часов)", $wallet['username'], $wallet['firstname'], $wallet['lastname'], $wallet['walletid'], $wallet['amount']);
         }
-
+        echo '<h3>Перевести деньги:</h3>';
         $mform->addElement('select','wallettotransfer','Кошелёк для перевода',$selectWalletsOptions);
         $mform->setType('wallettotransfer', PARAM_INT);
 
@@ -112,15 +113,59 @@ if(!$myWallet){
     $myWalletId = $DB->insert_record('city_wallets',$record);
     $myWallet = $DB->get_record('city_wallets', array('course' => $course->id, 'ownerid' => $USER->id, 'type' => 0),'*', MUST_EXIST);
 }
+echo '<h2><div id="brd">Ваш кошелёк - #'.$myWallet->id.'</div></h2><br>';
+echo '<h3>Баланс: '.$amount.' часа(ов)</h3><h6>В казне: '.city_get_wallet_amount($course->id, -1).' часа(ов)<br><a href="'. new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'viewMyTransactions')) .'">История операций</a><br></h6>';
+echo '<hr><h3>Операции:</h3>';
+echo '<a href="'. new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'payTax')) .'">- Уплатить налог</a><br>';
+if($amount > 0) echo '<a href="'.new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'transferStart')).'">- Перевести деньги</a><br>';
+if(has_capability('mod/city:operatebudget',$modulecontext)) echo '<a href="'. new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'operateBudgetStart')) .'">- Управление казной</a><br>';
+if(has_capability('mod/city:editalltransactions',$modulecontext)) echo '<a href="'. new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'viewTransactions')) .'">- Просмотр всех переводов всех жителей</a><br>';
+echo '<hr>';
 
-echo 'В казне сейчас: '.city_get_wallet_amount($course->id, -1).' часа(ов).<br>';
+//Показываем список транзакций пользователя
+if ('viewMyTransactions' == $action){
+    echo '<h3>История операций:</h3>';
+    $mytransactions = $DB->get_records('city_transaction_details', Array('walletid' => $myWallet->id), $sort='transactionid', $fields='*', $strictness=IGNORE_MISSING);
+    if($mytransactions){
+        echo '<table width="100%" border="1">
+        <tr>
+            <td>№</td>
+            <td>Время перевода</td>
+            <td>Тип перевода</td>
+            <td>Сумма</td>
+            <td>Технический комментарий</td>
+        </tr>';
+        foreach( $mytransactions as $mytr ){
+            $cTr = $DB->get_record('city_transactions', Array('id' => $mytr->transactionid),'*',MUST_EXIST);
+            printf('<tr><td>%d</td><td>%s</td><td>%s</td><td>%f</td><td>%s</td></tr>',$cTr->id, date("Y-m-d H:i:s", $cTr->time), $transferTypes[$cTr->type], $cTr->amount, $cTr->techcomment);
+        }
+        echo '</table>';
+    } else echo 'Не найдены.<br>';
+}
 
-if(has_capability('mod/city:operatebudget',$modulecontext))
-    echo 'У вас есть право <a href="'. new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'operateBudgetStart')) .'">управлять казной</a>.<br>';
-if(has_capability('mod/city:editalltransactions',$modulecontext))
-    echo 'У вас есть право <a href="'. new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'viewTransactions')) .'">просматривать все переводы всех жителей</a>.<br>';
+//Показываем страницу уплаты налогов
+if ('payTax' == $action){
+    echo '<h3>Уплатить налог: </h3>';
+        if ($amount >= 3) {
+            $taxPayment3 = new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'taxPayment','money'=>3));
+            echo '<a class="payTaxButtonGreen" href="'.$taxPayment3.'">3 часа (отметка Отлично)</a> ';
+        }
+        if ($amount >= 2) {
+            $taxPayment2 = new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'taxPayment','money'=>2));
+            echo '<a class="payTaxButtonOrange" href="'.$taxPayment2.'">2 часа (отметка Хорошо)</a> ';
+        }
+        if ($amount >= 1) {
+            $taxPayment1 = new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'taxPayment','money'=>1));
+            echo '<a class="payTaxButtonRed" href="'.$taxPayment2.'">1 час (отметка Удовлетворительно)</a><br>';
+        }
+        if (0 == $amount) {
+            echo 'нечем :-(<br>';
+        }
+}
 
+//Показываем переводы все жителей
 if(has_capability('mod/city:editalltransactions',$modulecontext) && 'viewTransactions' == $action){
+    echo '<h3>Просмотр всех переводов всех жителей:</h3>';
     $allwallets = city_get_wallets_by_course_id($course->id);
     if($allwallets){
         echo '<table width="100%" border="1">
@@ -200,8 +245,6 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
         //redirect($nexturl);
     }
 } else {
-    
-    echo 'Ваш кошелёк: #'.$myWallet->id.' ('.$amount.' часа(ов) по состоянию на '.date("Y-m-d H:i:s").')<br>';
     if('taxPayment' == $action){
         $payment = optional_param('money', 3, PARAM_INT);
         if ($payment < 1 OR $payment > 3){
@@ -272,46 +315,6 @@ if(has_capability('mod/city:operatebudget',$modulecontext) && strstr($action,'op
                 }
             }
         }
-    }
-    else {
-        echo 'Баланс: '.$amount.' часов. <br><hr> Уплатить налог: ';
-        if ($amount >= 3) {
-            $taxPayment3 = new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'taxPayment','money'=>3));
-            echo '<a href="'.$taxPayment3.'">3 часа (отметка Отлично)</a>, ';
-        }
-        if ($amount >= 2) {
-            $taxPayment2 = new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'taxPayment','money'=>2));
-            echo '<a href="'.$taxPayment2.'">2 часа (отметка Хорошо)</a>, ';
-        }
-        if ($amount >= 1) {
-            $taxPayment1 = new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'taxPayment','money'=>1));
-            echo '<a href="'.$taxPayment1.'">1 час (отметка Удовлетворительно)</a>.<br>';
-        }
-        if (0 == $amount) {
-            echo 'нечем :-(<br>';
-        }
-
-        if($amount > 0){
-            echo '<hr><br><a href="'.new moodle_url('/mod/city/view.php', array('id'=>$id,'action'=>'transferStart')).'">Перевести деньги другому жителю</a>.<br>';
-        }
-
-        echo '<br><b>История моих денежных переводов</b>:<br>';
-        $mytransactions = $DB->get_records('city_transaction_details', Array('walletid' => $myWallet->id), $sort='transactionid', $fields='*', $strictness=IGNORE_MISSING);
-        if($mytransactions){
-            echo '<table width="100%" border="1">
-            <tr>
-                <td>№</td>
-                <td>Время перевода</td>
-                <td>Тип перевода</td>
-                <td>Сумма</td>
-                <td>Технический комментарий</td>
-            </tr>';
-            foreach( $mytransactions as $mytr ){
-                $cTr = $DB->get_record('city_transactions', Array('id' => $mytr->transactionid),'*',MUST_EXIST);
-                printf('<tr><td>%d</td><td>%s</td><td>%s</td><td>%f</td><td>%s</td></tr>',$cTr->id, date("Y-m-d H:i:s", $cTr->time), $transferTypes[$cTr->type], $cTr->amount, $cTr->techcomment);
-            }
-            echo '</table>';
-        } else echo 'Не найдены.<br>';
     }
 }
 
